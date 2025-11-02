@@ -1,4 +1,4 @@
-package com.example.patientapp.ui.assessment
+package com.example.patientVisitapp.ui.assessment
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.patientapp.databinding.FragmentOverweightAssessmentBinding
-import com.example.patientapp.viewmodel.PatientViewModel
+import com.example.patientVisitapp.databinding.FragmentOverweightAssessmentBinding
+import com.example.patientVisitapp.viewmodel.PatientViewModel
 import java.util.*
 
 class OverweightAssessmentFragment : Fragment() {
@@ -42,7 +42,7 @@ class OverweightAssessmentFragment : Fragment() {
             }
 
             viewModel.addAssessment(patientId, visitDateMillis, "overweight", generalHealth, null, usingDrugs, comments)
-            findNavController().navigate(com.example.patientapp.R.id.action_overweight_to_list)
+            findNavController().navigate(com.example.patientVisitapp.R.id.action_overweight_to_list)
         }
     }
 

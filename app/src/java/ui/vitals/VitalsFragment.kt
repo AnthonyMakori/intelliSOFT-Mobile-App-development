@@ -1,4 +1,4 @@
-package com.example.patientapp.ui.vitals
+package com.example.patientVisitapp.ui.vitals
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.patientapp.databinding.FragmentVitalsBinding
-import com.example.patientapp.viewmodel.PatientViewModel
-import com.example.patientapp.util.Utils
+import com.example.patientVisitapp.databinding.FragmentVitalsBinding
+import com.example.patientVisitapp.viewmodel.PatientViewModel
+import com.example.patientVisitapp.util.Utils
 import java.util.*
 
 class VitalsFragment : Fragment() {
@@ -57,9 +57,9 @@ class VitalsFragment : Fragment() {
 
             viewModel.addVitals(patientId, visitDateMillis, h, w) { bmi ->
                 if (bmi >= 25.0) {
-                    findNavController().navigate(com.example.patientapp.R.id.action_vitals_to_overweightAssessment)
+                    findNavController().navigate(com.example.patientVisitapp.R.id.action_vitals_to_overweightAssessment)
                 } else {
-                    findNavController().navigate(com.example.patientapp.R.id.action_vitals_to_generalAssessment)
+                    findNavController().navigate(com.example.patientVisitapp.R.id.action_vitals_to_generalAssessment)
                 }
             }
         }

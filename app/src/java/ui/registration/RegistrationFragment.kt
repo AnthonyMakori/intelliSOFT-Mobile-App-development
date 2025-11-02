@@ -1,4 +1,4 @@
-package com.example.patientapp.ui.registration
+package com.example.patientVisitapp.ui.registration
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.patientapp.databinding.FragmentRegistrationBinding
-import com.example.patientapp.viewmodel.PatientViewModel
+import com.example.patientVisitapp.databinding.FragmentRegistrationBinding
+import com.example.patientVisitapp.viewmodel.PatientViewModel
 import java.util.*
 
 class RegistrationFragment : Fragment() {
@@ -50,7 +50,7 @@ class RegistrationFragment : Fragment() {
             viewModel.registrationState.observe(viewLifecycleOwner) { result ->
                 result.onSuccess {
                     // Navigate to vitals with patient id as argument (use SafeArgs for production)
-                    val action = com.example.patientapp.ui.registration.RegistrationFragmentDirections.actionRegistrationToVitals()
+                    val action = com.example.patientVisitapp.ui.registration.RegistrationFragmentDirections.actionRegistrationToVitals()
                     // if you want to pass patientId, add an argument to nav_graph and to action above
                     findNavController().navigate(action)
                 }

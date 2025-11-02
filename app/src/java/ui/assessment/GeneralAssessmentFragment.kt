@@ -1,4 +1,4 @@
-package com.example.patientapp.ui.assessment
+package com.example.patientVisitapp.ui.assessment
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.patientapp.databinding.FragmentGeneralAssessmentBinding
-import com.example.patientapp.viewmodel.PatientViewModel
+import com.example.patientVisitapp.databinding.FragmentGeneralAssessmentBinding
+import com.example.patientVisitapp.viewmodel.PatientViewModel
 import java.util.*
 
 class GeneralAssessmentFragment : Fragment() {
@@ -44,7 +44,7 @@ class GeneralAssessmentFragment : Fragment() {
 
             // Save assessment entity using repository through ViewModel
             viewModel.addAssessment(patientId, visitDateMillis, "general", generalHealth, usedDiet, null, comments)
-            findNavController().navigate(com.example.patientapp.R.id.action_general_to_list)
+            findNavController().navigate(com.example.patientVisitapp.R.id.action_general_to_list)
         }
     }
 

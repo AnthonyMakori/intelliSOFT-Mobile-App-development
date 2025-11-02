@@ -1,12 +1,12 @@
-package com.example.patientapp.ui.listing
+package com.example.patientVisitapp.ui.listing
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.patientapp.databinding.ItemPatientBinding
-import com.example.patientapp.viewmodel.PatientListItem
+import com.example.patientVisitapp.databinding.ItemPatientBinding
+import com.example.patientVisitapp.viewmodel.PatientListItem
 
 class PatientListAdapter : ListAdapter<PatientListItem, PatientListAdapter.VH>(DIFF) {
 
