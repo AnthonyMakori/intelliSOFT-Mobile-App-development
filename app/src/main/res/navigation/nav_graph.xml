@@ -4,19 +4,24 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/registrationFragment">
 
+    <!-- Registration Screen -->
     <fragment
         android:id="@+id/registrationFragment"
-        android:name="com.example.patientVisitapp.ui.registration.RegistrationFragment"
+        android:name="com.example.patientvisitapp.ui.registration.RegistrationFragment"
         android:label="Register">
         <action
             android:id="@+id/action_registration_to_vitals"
             app:destination="@id/vitalsFragment" />
     </fragment>
 
+    <!-- Vitals Screen -->
     <fragment
         android:id="@+id/vitalsFragment"
-        android:name="com.example.patientVisitapp.ui.vitals.VitalsFragment"
+        android:name="com.example.patientvisitapp.ui.vitals.VitalsFragment"
         android:label="Vitals">
+        <argument
+            android:name="patientId"
+            app:argType="long" />
         <action
             android:id="@+id/action_vitals_to_generalAssessment"
             app:destination="@id/generalAssessmentFragment" />
@@ -25,22 +30,35 @@
             app:destination="@id/overweightAssessmentFragment" />
     </fragment>
 
+    <!-- General Assessment (BMI < 25) -->
     <fragment
         android:id="@+id/generalAssessmentFragment"
-        android:name="com.example.patientVisitapp.ui.assessment.GeneralAssessmentFragment"
+        android:name="com.example.patientvisitapp.ui.assessment.GeneralAssessmentFragment"
         android:label="General Assessment">
-        <action android:id="@+id/action_general_to_list" app:destination="@id/patientListFragment" />
+        <argument
+            android:name="patientId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_general_to_list"
+            app:destination="@id/patientListFragment" />
     </fragment>
 
+    <!-- Overweight Assessment (BMI ≥ 25) -->
     <fragment
         android:id="@+id/overweightAssessmentFragment"
-        android:name="com.example.patientVisitapp.ui.assessment.OverweightAssessmentFragment"
+        android:name="com.example.patientvisitapp.ui.assessment.OverweightAssessmentFragment"
         android:label="Overweight Assessment">
-        <action android:id="@+id/action_overweight_to_list" app:destination="@id/patientListFragment" />
+        <argument
+            android:name="patientId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_overweight_to_list"
+            app:destination="@id/patientListFragment" />
     </fragment>
 
+    <!-- Patient Listing Screen -->
     <fragment
         android:id="@+id/patientListFragment"
-        android:name="com.example.patientVisitapp.ui.listing.PatientListFragment"
+        android:name="com.example.patientvisitapp.ui.listing.PatientListFragment"
         android:label="Patient Listing" />
 </navigation>
