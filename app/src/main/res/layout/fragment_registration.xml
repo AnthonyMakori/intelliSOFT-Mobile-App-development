@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <EditText android:id="@+id/etPatientId" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Patient ID"/>
+        <EditText android:id="@+id/etFirstName" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="First name"/>
+        <EditText android:id="@+id/etLastName" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Last name"/>
+
+        <TextView android:id="@+id/tvDob" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Select DOB" android:padding="12dp" android:background="?attr/selectableItemBackground"/>
+
+        <RadioGroup android:id="@+id/rgGender" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <RadioButton android:id="@+id/rbMale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Male" android:checked="true"/>
+            <RadioButton android:id="@+id/rbFemale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Female"/>
+        </RadioGroup>
+
+        <Button android:id="@+id/btnRegister" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Register" android:layout_marginTop="16dp"/>
+    </LinearLayout>
+</ScrollView>

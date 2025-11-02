@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/registrationFragment">
+
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="com.example.patientapp.ui.registration.RegistrationFragment"
+        android:label="Register">
+        <action
+            android:id="@+id/action_registration_to_vitals"
+            app:destination="@id/vitalsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/vitalsFragment"
+        android:name="com.example.patientapp.ui.vitals.VitalsFragment"
+        android:label="Vitals">
+        <action
+            android:id="@+id/action_vitals_to_generalAssessment"
+            app:destination="@id/generalAssessmentFragment" />
+        <action
+            android:id="@+id/action_vitals_to_overweightAssessment"
+            app:destination="@id/overweightAssessmentFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/generalAssessmentFragment"
+        android:name="com.example.patientapp.ui.assessment.GeneralAssessmentFragment"
+        android:label="General Assessment">
+        <action android:id="@+id/action_general_to_list" app:destination="@id/patientListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/overweightAssessmentFragment"
+        android:name="com.example.patientapp.ui.assessment.OverweightAssessmentFragment"
+        android:label="Overweight Assessment">
+        <action android:id="@+id/action_overweight_to_list" app:destination="@id/patientListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/patientListFragment"
+        android:name="com.example.patientapp.ui.listing.PatientListFragment"
+        android:label="Patient Listing" />
+</navigation>

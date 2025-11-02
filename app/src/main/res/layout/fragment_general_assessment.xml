@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:padding="16dp">
+    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <TextView android:id="@+id/tvVisitDate" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Select Visit Date" android:padding="12dp" android:background="?attr/selectableItemBackground"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="General health"/>
+        <RadioGroup android:id="@+id/rgGeneralHealth" android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbGood" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good" android:checked="true"/>
+            <RadioButton android:id="@+id/rbPoor" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Poor"/>
+        </RadioGroup>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Been on diet before?"/>
+        <RadioGroup android:id="@+id/rgDiet" android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbDietYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes"/>
+            <RadioButton android:id="@+id/rbDietNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" android:checked="true"/>
+        </RadioGroup>
+
+        <EditText android:id="@+id/etComments" android:layout_width="match_parent" android:layout_height="120dp" android:hint="Comments" android:gravity="top"/>
+
+        <Button android:id="@+id/btnSave" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Save Assessment" android:layout_marginTop="16dp"/>
+    </LinearLayout>
+</ScrollView>
