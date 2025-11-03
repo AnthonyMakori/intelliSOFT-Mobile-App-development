@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     id("kotlin-kapt")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -37,6 +38,10 @@ android {
 
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15" 
     }
 
     buildFeatures {
@@ -88,4 +93,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     implementation("io.coil-kt:coil:2.3.0")
+
+
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+      implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+
 }

@@ -50,7 +50,7 @@ class RegistrationFragment : Fragment() {
             viewModel.registrationState.observe(viewLifecycleOwner) { result ->
                 result.onSuccess {
                     // Navigate to vitals with patient id as argument (use SafeArgs for production)
-                    val action = com.example.patientVisitapp.ui.registration.RegistrationFragmentDirections.actionRegistrationToVitals()
+                    val action = com.example.patientVisitapp.ui.registration.RegistrationFragmentDirections.actionRegistrationToVitals(pid)
                     // if you want to pass patientId, add an argument to nav_graph and to action above
                     findNavController().navigate(action)
                 }
