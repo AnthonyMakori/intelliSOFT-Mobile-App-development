@@ -17,9 +17,9 @@ class RegistrationFragment : Fragment() {
     private var _binding: FragmentRegistrationBinding? = null
     private val binding get() = _binding!!
 
-    // TODO: obtain ViewModel using your factory / DI
+    // TODO: obtain ViewModel using factory / DI
     private val viewModel: PatientViewModel by lazy {
-        // Replace with proper ViewModelProvider if you have a factory
+        // Replace with proper ViewModelProvider if a factory exists
         androidx.lifecycle.ViewModelProvider(requireActivity()).get(PatientViewModel::class.java)
     }
 
@@ -50,7 +50,7 @@ class RegistrationFragment : Fragment() {
             viewModel.registrationState.observe(viewLifecycleOwner) { result ->
                 result.onSuccess {
                     // Navigate to vitals with patient id as argument (use SafeArgs for production)
-                    val action = com.example.patientVisitapp.ui.registration.RegistrationFragmentDirections.actionRegistrationToVitals(pid)
+                    val action = com.example.patientVisitapp.ui.registration.RegistrationFragmentDirections.actionRegistrationToVitals()
                     // if you want to pass patientId, add an argument to nav_graph and to action above
                     findNavController().navigate(action)
                 }
