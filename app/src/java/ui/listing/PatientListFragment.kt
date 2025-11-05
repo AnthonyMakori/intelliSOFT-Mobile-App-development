@@ -32,7 +32,7 @@ class PatientListFragment : Fragment() {
         binding.recycler.layoutManager = LinearLayoutManager(requireContext())
         binding.recycler.adapter = adapter
 
-        // Use ViewModel to observe list of patients (you should expose LiveData/Flow in ViewModel)
+        // Using ViewModel to observe list of patients 
         viewModel.patientList.observe(viewLifecycleOwner) { items ->
             adapter.submitList(items)
         }
@@ -47,7 +47,7 @@ class PatientListFragment : Fragment() {
         val dp = DatePickerDialog(requireContext(), { _, y, m, d ->
             val cal = Calendar.getInstance()
             cal.set(y, m, d, 0, 0, 0)
-            // Ask ViewModel to filter by this date (viewModel.filterByVisitDate(cal.timeInMillis))
+            // Asking ViewModel to filter by this date (viewModel.filterByVisitDate(cal.timeInMillis))
             viewModel.filterByVisitDate(cal.timeInMillis)
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH))
         dp.show()

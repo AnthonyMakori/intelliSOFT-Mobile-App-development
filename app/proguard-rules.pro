@@ -19,3 +19,18 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep Room database entities and DAOs
+-keep class com.example.patientvisitapp.data.model.** { *; }
+-keep class com.example.patientvisitapp.data.dao.** { *; }
+
+# Keep Retrofit service interfaces
+-keep class com.example.patientvisitapp.network.** { *; }
+
+# Keep Gson serialization classes
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
+}
+
+# Keep ViewModels
+-keep class com.example.patientvisitapp.viewmodel.** { *; }

@@ -17,9 +17,9 @@ class RegistrationFragment : Fragment() {
     private var _binding: FragmentRegistrationBinding? = null
     private val binding get() = _binding!!
 
-    // TODO: obtain ViewModel using your factory / DI
+    // TODO: obtain ViewModel using factory / DI
     private val viewModel: PatientViewModel by lazy {
-        // Replace with proper ViewModelProvider if you have a factory
+        // Replace with proper ViewModelProvider if a factory exists
         androidx.lifecycle.ViewModelProvider(requireActivity()).get(PatientViewModel::class.java)
     }
 

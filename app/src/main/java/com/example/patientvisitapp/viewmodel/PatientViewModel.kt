@@ -13,8 +13,11 @@ import com.example.patientvisitapp.repository.PatientRepository
 import com.example.patientvisitapp.util.AuthManager
 import com.example.patientvisitapp.network.RetrofitClient
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.math.round
 
 data class PatientListItem(
     val patientId: String,
@@ -25,25 +28,45 @@ data class PatientListItem(
 )
 
 class PatientViewModel(application: Application) : AndroidViewModel(application) {
+
     private val db = AppDatabase.getInstance(application)
     private val auth = AuthManager(application)
     private val api = RetrofitClient.create(auth)
     private val repo = PatientRepository(db, api, auth)
 
+    /** StateFlows and LiveData **/
     private val _registrationState = MutableLiveData<Result<Unit>>()
     val registrationState: LiveData<Result<Unit>> = _registrationState
 
     private val _patientList = MutableLiveData<List<PatientListItem>>()
     val patientList: LiveData<List<PatientListItem>> = _patientList
 
+    // Expose current loaded patient
+    private val _currentPatient = MutableStateFlow<PatientEntity?>(null)
+    val currentPatient: StateFlow<PatientEntity?> = _currentPatient
+
     init {
         loadPatients()
     }
 
-    fun registerPatient(patientId: String, firstName: String, lastName: String, dobMillis: Long, gender: String) {
+    /** -------- Patient Registration -------- **/
+    fun registerPatient(
+        patientId: String,
+        firstName: String,
+        lastName: String,
+        dobMillis: Long,
+        gender: String
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val patient = PatientEntity(patientId = patientId, firstName = firstName, lastName = lastName, registrationDate = System.currentTimeMillis(), dob = dobMillis, gender = gender)
+                val patient = PatientEntity(
+                    patientId = patientId,
+                    firstName = firstName,
+                    lastName = lastName,
+                    registrationDate = System.currentTimeMillis(),
+                    dob = dobMillis,
+                    gender = gender
+                )
                 repo.registerPatientLocal(patient)
                 _registrationState.postValue(Result.success(Unit))
                 loadPatients()
@@ -53,30 +76,89 @@ class PatientViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun addVitals(patientId:String, visitDate:Long, heightCm:Double, weightKg:Double, onNext: (Double)->Unit) {
+    /** Alternative add function with callback **/
+    fun addPatient(
+        patientId: String,
+        regDate: Long,
+        first: String,
+        last: String,
+        dob: Long,
+        gender: String,
+        onComplete: (() -> Unit)? = null
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val heightM = heightCm / 100.0
-            val bmi = if (heightM > 0) weightKg / (heightM * heightM) else 0.0
-            val vitals = VitalsEntity(patientId = patientId, visitDate = visitDate, heightCm = heightCm, weightKg = weightKg, bmi = kotlin.math.round(bmi * 100) / 100.0)
-            repo.addVitalsLocal(vitals)
-            loadPatients()
-            onNext(vitals.bmi)
+            try {
+                val patient = PatientEntity(patientId, first, last, regDate, dob, gender)
+                repo.registerPatientLocal(patient)
+                withContext(Dispatchers.Main) { onComplete?.invoke() }
+                loadPatients()
+            } catch (_: Exception) {}
         }
     }
 
-    fun addAssessment(patientId:String, visitDate:Long, type:String, generalHealth:String, usedDiet:String?, usingDrugs:String?, comments:String) {
+    /** ------- Load Specific Patient ------- **/
+    fun loadPatientById(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val assessment = AssessmentEntity(patientId = patientId, visitDate = visitDate, type = type, generalHealth = generalHealth, usedDietBefore = usedDiet, usingDrugs = usingDrugs, comments = comments)
+            _currentPatient.value = db.patientDao().getPatientById(id)
+        }
+    }
+
+    /** ------- Add Vitals ------- **/
+    fun addVitals(
+        patientId: String,
+        visitDate: Long,
+        heightCm: Double,
+        weightKg: Double,
+        onNext: (Double) -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val heightM = heightCm / 100.0
+            val bmi = if (heightM > 0) weightKg / (heightM * heightM) else 0.0
+            val roundedBmi = round(bmi * 100) / 100.0
+
+            val vitals = VitalsEntity(
+                patientId = patientId,
+                visitDate = visitDate,
+                heightCm = heightCm,
+                weightKg = weightKg,
+                bmi = roundedBmi
+            )
+            repo.addVitalsLocal(vitals)
+            loadPatients()
+            withContext(Dispatchers.Main) { onNext(roundedBmi) }
+        }
+    }
+
+    /** ------- Add Assessment ------- **/
+    fun addAssessment(
+        patientId: String,
+        visitDate: Long,
+        type: String,
+        generalHealth: String,
+        usedDiet: String?,
+        usingDrugs: String?,
+        comments: String
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val assessment = AssessmentEntity(
+                patientId = patientId,
+                visitDate = visitDate,
+                type = type,
+                generalHealth = generalHealth,
+                usedDietBefore = usedDiet,
+                usingDrugs = usingDrugs,
+                comments = comments
+            )
             repo.addAssessmentLocal(assessment)
             loadPatients()
         }
     }
 
+    /** ------- Load Patient List ------- **/
     fun loadPatients() {
         viewModelScope.launch(Dispatchers.IO) {
             db.patientDao().getAllPatients().collect { list ->
-                val items = mutableListOf<PatientListItem>()
-                for (p in list) {
+                val items = list.map { p ->
                     val lastVitals = db.vitalsDao().getLastVitalsForPatient(p.patientId)
                     val bmi = lastVitals?.bmi
                     val status = when {
@@ -85,14 +167,21 @@ class PatientViewModel(application: Application) : AndroidViewModel(application)
                         bmi < 25.0 -> "Normal"
                         else -> "Overweight"
                     }
-                    items.add(PatientListItem(p.patientId, "${p.firstName} ${p.lastName}", calculateAge(p.dob), bmi, status))
+                    PatientListItem(
+                        p.patientId,
+                        "${p.firstName} ${p.lastName}",
+                        calculateAge(p.dob),
+                        bmi,
+                        status
+                    )
                 }
                 _patientList.postValue(items)
             }
         }
     }
 
-    private fun calculateAge(dobMillis:Long): Int {
+    /** ------- Calculate Age ------- **/
+    private fun calculateAge(dobMillis: Long): Int {
         val dob = java.util.Calendar.getInstance().apply { timeInMillis = dobMillis }
         val now = java.util.Calendar.getInstance()
         var age = now.get(java.util.Calendar.YEAR) - dob.get(java.util.Calendar.YEAR)
@@ -100,15 +189,16 @@ class PatientViewModel(application: Application) : AndroidViewModel(application)
         return age
     }
 
-    fun filterByVisitDate(dateMillis:Long) {
+    /** ------- Filter By Visit Date ------- **/
+    fun filterByVisitDate(dateMillis: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val from = dateMillis
-            val to = dateMillis + 24*60*60*1000 - 1
+            val to = dateMillis + 24 * 60 * 60 * 1000 - 1
             val vitals = db.vitalsDao().getVitalsByDateRange(from, to)
             val patientIds = vitals.map { it.patientId }.toSet()
-            val items = mutableListOf<PatientListItem>()
-            for (id in patientIds) {
-                val p = db.patientDao().getPatientById(id) ?: continue
+
+            val items = patientIds.mapNotNull { id ->
+                val p = db.patientDao().getPatientById(id) ?: return@mapNotNull null
                 val lastVitals = db.vitalsDao().getLastVitalsForPatient(id)
                 val bmi = lastVitals?.bmi
                 val status = when {
@@ -117,7 +207,7 @@ class PatientViewModel(application: Application) : AndroidViewModel(application)
                     bmi < 25.0 -> "Normal"
                     else -> "Overweight"
                 }
-                items.add(PatientListItem(p.patientId, "${p.firstName} ${p.lastName}", calculateAge(p.dob), bmi, status))
+                PatientListItem(p.patientId, "${p.firstName} ${p.lastName}", calculateAge(p.dob), bmi, status)
             }
             _patientList.postValue(items)
         }
