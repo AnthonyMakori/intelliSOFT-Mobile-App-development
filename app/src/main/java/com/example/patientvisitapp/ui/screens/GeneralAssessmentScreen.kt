@@ -16,28 +16,23 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssessmentScreen(
+fun GeneralAssessmentScreen(
     navController: NavController,
     vm: PatientViewModel,
-    type: String,
     patientId: String
 ) {
     val context = LocalContext.current
 
     var visitDateMillis by remember { mutableStateOf(System.currentTimeMillis()) }
-    var generalHealth by remember { mutableStateOf("Good") }
-    var usedDiet by remember { mutableStateOf("No") }
-    var usingDrugs by remember { mutableStateOf("No") }
+    var generalHealth by remember { mutableStateOf("Good") }    // Good / Poor
+    var everOnDiet by remember { mutableStateOf("No") }         // Yes / No
     var comments by remember { mutableStateOf("") }
 
-    // Setup for dynamic labels based on type
-    val isGeneral = type == "general"
-    val title = if (isGeneral) "General Assessment" else "Overweight Assessment"
-
-    // Date Picker
+    // Date picker helper
     fun showDatePicker(initial: Long, onPick: (Long) -> Unit) {
         val cal = Calendar.getInstance()
         if (initial > 0) cal.timeInMillis = initial
+
         DatePickerDialog(
             context,
             { _, y, m, d ->
@@ -51,16 +46,16 @@ fun AssessmentScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text(title) }) }
+        topBar = { TopAppBar(title = { Text("General Assessment") }) }
     ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(36.dp)
+                .padding(24.dp)
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            /** Visit Date **/
+            // Visit date (tap to change)
             OutlinedTextField(
                 value = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(visitDateMillis)),
                 onValueChange = {},
@@ -71,85 +66,66 @@ fun AssessmentScreen(
                 label = { Text("Visit Date (tap to set)") }
             )
 
-            /** General Health **/
-            Text("General Health", style = MaterialTheme.typography.titleMedium)
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            // General Health (Good / Poor)
+            Text(text = "General Health", style = MaterialTheme.typography.titleMedium)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
                 listOf("Good", "Poor").forEach { opt ->
                     FilterChip(
-                        selected = generalHealth == opt,
+                        selected = (generalHealth == opt),
                         onClick = { generalHealth = opt },
                         label = { Text(opt) }
                     )
                 }
             }
 
-            /** Conditional Question **/
-            if (isGeneral) {
-                Text("Have you ever been on a diet to lose weight?", style = MaterialTheme.typography.titleMedium)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    listOf("Yes", "No").forEach { opt ->
-                        FilterChip(
-                            selected = usedDiet == opt,
-                            onClick = { usedDiet = opt },
-                            label = { Text(opt) }
-                        )
-                    }
-                }
-            } else {
-                Text("Are you currently using any drugs?", style = MaterialTheme.typography.titleMedium)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    listOf("Yes", "No").forEach { opt ->
-                        FilterChip(
-                            selected = usingDrugs == opt,
-                            onClick = { usingDrugs = opt },
-                            label = { Text(opt) }
-                        )
-                    }
+            // Ever on a diet? (Yes / No)
+            Text(text = "Have you ever been on a diet to lose weight?", style = MaterialTheme.typography.titleMedium)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                listOf("Yes", "No").forEach { opt ->
+                    FilterChip(
+                        selected = (everOnDiet == opt),
+                        onClick = { everOnDiet = opt },
+                        label = { Text(opt) }
+                    )
                 }
             }
 
-            /** Comments **/
+            // Comments (mandatory)
             OutlinedTextField(
                 value = comments,
                 onValueChange = { comments = it },
                 label = { Text("Comments") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = false,
-                maxLines = 3
+                maxLines = 4
             )
 
-            /** Save Button **/
+            // Save button: validate, save through existing ViewModel.addAssessment, then go to patient list
             Button(
                 onClick = {
+                    // Validation per PDF: all fields mandatory
                     if (comments.isBlank()) {
                         Toast.makeText(context, "Comments are required", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
 
+                    // Use the existing addAssessment() in your ViewModel (type = "general")
                     vm.addAssessment(
                         patientId = patientId,
                         visitDate = visitDateMillis,
-                        type = type,
+                        type = "general",
                         generalHealth = generalHealth,
-                        usedDiet = if (isGeneral) usedDiet else null,
-                        usingDrugs = if (isGeneral) null else usingDrugs,
+                        usedDiet = everOnDiet,
+                        usingDrugs = null,
                         comments = comments
                     )
 
-                    Toast.makeText(context, "Assessment saved successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "General assessment saved", Toast.LENGTH_SHORT).show()
 
-                    // Per the practical: redirect to patient listing page
-                    navController.navigate("list") {
-                        popUpTo("registration") { inclusive = false }
+                    // Redirect to patient listing per PDF requirement
+                    navController.navigate("patients") {
+                        // remove vitals/general from back stack so user lands on listing cleanly
+                        popUpTo("patients") { inclusive = false }
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -157,11 +133,12 @@ fun AssessmentScreen(
                 Text("Save & Finish")
             }
 
+            // Cancel/back
             OutlinedButton(
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Cancel")
+                Text("Back")
             }
         }
     }
