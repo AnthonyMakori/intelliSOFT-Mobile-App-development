@@ -108,9 +108,9 @@ fun VitalsScreen(navController: NavController, vm: PatientViewModel, patientId: 
 
                     vm.addVitals(patientId, visitDateMillis, h, w) {
                         if (bmi <= 25.0) {
-                            navController.navigate("generalAssessment/$patientId")
+                            navController.navigate("general/$patientId")
                         } else {
-                            navController.navigate("overweightAssessment/$patientId")
+                            navController.navigate("overweight/$patientId")
                         }
                     }
                 },

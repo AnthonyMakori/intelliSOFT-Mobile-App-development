@@ -26,13 +26,13 @@ class MainActivity : ComponentActivity() {
             PatientVisitAppTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
 
-                    // ✅ Navigation controller
+                    //  Navigation controller
                     val navController = rememberNavController()
 
-                    // ✅ Shared ViewModel across all screens
+                    //  Shared ViewModel across all screens
                     val vm: PatientViewModel = viewModel()
 
-                    // ✅ Navigation graph
+                    //  Navigation graph
                     NavHost(navController = navController, startDestination = "registration") {
 
                         // 🔹 Registration screen
@@ -81,6 +81,9 @@ class MainActivity : ComponentActivity() {
                         composable("list") {
                             ListScreen(navController = navController, vm = vm)
                         }
+
+    
+
                     }
                 }
             }

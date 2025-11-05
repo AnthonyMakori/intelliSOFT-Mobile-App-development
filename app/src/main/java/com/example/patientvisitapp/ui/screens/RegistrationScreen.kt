@@ -15,7 +15,7 @@ import com.example.patientvisitapp.viewmodel.PatientViewModel
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun RegistrationScreen(navController: NavController, vm: PatientViewModel) {
     val context = LocalContext.current
